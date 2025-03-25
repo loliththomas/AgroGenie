@@ -5,6 +5,10 @@ import SignUp from './components/auth/SignUp';
 import Dashboard from './components/dashboard/Dashboard';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 import { AuthProvider } from './contexts/AuthContext';
+import CropPrediction from '../features/CropPrediction.jsx';
+import FertilizerRecommendation from '../features/FertilizerRecommendation.jsx';
+import Yield from '../features/Yield.jsx';  
+import FertilizerResults from '../features/FertilizerResults.jsx';
 
 function App() {
   return (
@@ -17,12 +21,16 @@ function App() {
             <Route
               path="/dashboard"
               element={
-                //<ProtectedRoute>
+                <ProtectedRoute>
                   <Dashboard />
-                //</ProtectedRoute>
+                </ProtectedRoute>
               }
             />
             <Route path="/" element={<Login />} />
+            <Route path="/prediction" element={<CropPrediction />} />
+            <Route path="/fertilizer" element={<FertilizerRecommendation />} />
+            <Route path="/yield" element={<Yield />} /> 
+            <Route path="/fertilizer-results" element={<FertilizerResults />} />
           </Routes>
         </div>
       </Router>

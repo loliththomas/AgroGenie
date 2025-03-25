@@ -16,6 +16,14 @@ export default function Dashboard() {
     }
   }
 
+  const handlePredictionClick = () => {
+    navigate('/prediction');
+  };
+
+  const handleFertilizerClick = () => {
+    navigate('/fertilizer');
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       <nav className="bg-white shadow-sm">
@@ -47,7 +55,10 @@ export default function Dashboard() {
             <p className="text-gray-600 mb-4">
               Predict the best crops for your region based on historical data and environmental conditions.
             </p>
-            <button className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition duration-200">
+            <button 
+              onClick={handlePredictionClick}
+              className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition duration-200"
+            >
               Start Prediction
             </button>
           </div>
@@ -60,7 +71,10 @@ export default function Dashboard() {
             <p className="text-gray-600 mb-4">
               Get personalized organic fertilizer recommendations for optimal crop health and yield.
             </p>
-            <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-200">
+            <button 
+              onClick={handleFertilizerClick}
+              className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-200"
+            >
               Get Recommendations
             </button>
           </div>

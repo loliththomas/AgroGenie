@@ -11,13 +11,13 @@ import {
 import { getFirestore } from 'firebase/firestore';
 
 const firebaseConfig = {
-  apiKey: "AIzaSyBXeJVXv9ed0uhzZoIYe4kt1xQTan8WcG0",
-  authDomain: "agro-6969.firebaseapp.com",
-  projectId: "agro-6969",
-  storageBucket: "agro-6969.firebasestorage.app",
-  messagingSenderId: "461703580117",
-  appId: "1:461703580117:web:888226d817c15758e6d55c",
-  measurementId: "G-XCJ9WXB5H2"
+  apiKey: "AIzaSyAp6vY6pwGmiM1AQEUKnCDcY9PgKUdQOnU",
+  authDomain: "cypo-702e0.firebaseapp.com",
+  projectId: "cypo-702e0",
+  storageBucket: "cypo-702e0.firebasestorage.app",
+  messagingSenderId: "185678297392",
+  appId: "1:185678297392:web:750910c2255ea18f3ef0f5",
+  measurementId: "G-G9RB2TM24L"
 };
 
 const app = initializeApp(firebaseConfig);
