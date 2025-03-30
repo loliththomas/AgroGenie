@@ -5,6 +5,7 @@ export default function FertilizerResults() {
     const location = useLocation();
     const navigate = useNavigate();
     const recommendation = location.state?.recommendation;
+    const selectedCrop = location.state?.selectedCrop;  // Get the crop name
 
     if (!location.state || !recommendation) {
         return (
@@ -37,7 +38,7 @@ export default function FertilizerResults() {
                         <div className="space-y-6">
                             <div className="bg-green-50 rounded-lg p-6">
                                 <h2 className="text-2xl font-bold text-green-800 mb-4">
-                                    Recommended Fertilizer
+                                    Recommended Fertilizer for {selectedCrop}
                                 </h2>
                                 <div className="text-xl font-semibold text-green-700 mb-2">
                                     {recommendation.fertilizer}

@@ -31,7 +31,7 @@ export default function Yield() {
         labels: results.map(item => item.crop),
         datasets: [
             {
-                label: 'Predicted Yield',
+                label: 'Predicted Yield (Tons/Hect)',
                 data: results.map(item => item.yield),
                 backgroundColor: [
                     'rgba(34, 197, 94, 0.8)',  // green-600

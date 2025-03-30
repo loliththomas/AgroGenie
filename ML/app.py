@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify
 import numpy as np
+import pandas as pd
 import joblib
 from sklearn.preprocessing import OneHotEncoder
 from tensorflow.keras.models import load_model
@@ -17,10 +18,10 @@ CORS(app)
 
 # Load model and preprocessors
 try:
-    model = load_model('C:\\Users\\arunk\\Desktop\\cyp\\ML\\crop_yield_model.h5', custom_objects={"CustomMSE": CustomMSE()})
-    scaler = joblib.load('C:\\Users\\arunk\\Desktop\\cyp\\ML\\scaler.pkl')
-    season_encoder = joblib.load('C:\\Users\\arunk\\Desktop\\cyp\\ML\\season_encoder.pkl')
-    crop_encoder = joblib.load('C:\\Users\\arunk\\Desktop\\cyp\\ML\\crop_encoder.pkl')
+    model = load_model('F:\\Study\\S8\\cyp\\ML\\crop-yield\\crop_yield_model.h5', custom_objects={"CustomMSE": CustomMSE()})
+    scaler = joblib.load('F:\\Study\\S8\\cyp\\ML\\crop-yield\\scaler.pkl')
+    season_encoder = joblib.load('F:\\Study\\S8\\cyp\\ML\\crop-yield\\season_encoder.pkl')
+    crop_encoder = joblib.load('F:\\Study\\S8\\cyp\\ML\\crop-yield\\crop_encoder.pkl')
     print("All models and preprocessors loaded successfully.")
 except Exception as e:
     print(f"Error loading dependencies: {e}")
@@ -33,52 +34,38 @@ def predict():
         data = request.get_json()
         print("Received data:", data)
 
-        # Ensure required keys exist
+        # Ensure required keys exist and validate temperature
         required_keys = {'ph', 'rainfall', 'temperature', 'season'}
         if not required_keys.issubset(data.keys()):
             return jsonify({'error': f'Missing keys in input data. Required keys: {required_keys}'}), 400
-
-        # Ensure temperature is a list of 5 values
         if not isinstance(data['temperature'], list) or len(data['temperature']) != 5:
             return jsonify({'error': 'Temperature must be a list of 5 values'}), 400
         
         # Prepare input values
         user_ph = data['ph']
         user_rainfall = data['rainfall']
-        avg_temperature = np.mean(data['temperature'])  # Take average of 5 temperature values
 
-        # Ensure the feature order matches the scaler training data (4 features)
-        input_data = np.array([[user_ph, avg_temperature, user_rainfall, 0]])  # Add a dummy 4th feature
-
-        # Scale the input data
-        scaled_features = scaler.transform(input_data)  # This now has 4 features
-        user_ph_scaled = scaled_features[:, 0:1]
-        user_temp_scaled = scaled_features[:, 1:2]  # Scaled temperature
-        user_rainfall_scaled = scaled_features[:, 2:3]
-
+        # Scale numerical features (ph, rainfall, season)
+        other_features = scaler.transform([[user_ph, user_rainfall, 0]])  # Add dummy for scaling
+        
         # Encode season
-        user_season = season_encoder.transform([[data['season']]])  # Shape (1, encoded_dim)
+        season_encoded = season_encoder.transform([data['season']])
+        
+        # Create final feature array
+        other_features_final = np.column_stack([other_features[:, :2], season_encoded])
 
-        # Convert temperature sequence to numpy array
-        user_temperature_seq = np.array(data['temperature']).reshape(1, 5, 1)  # Shape (1,5,1) for LSTM
-
-        # Debug prints
-        print("Processed inputs:")
-        print(f"pH (scaled): {user_ph_scaled}")
-        print(f"Temperature (scaled): {user_temp_scaled}")
-        print(f"Rainfall (scaled): {user_rainfall_scaled}")
-        print(f"Temperature sequence: {user_temperature_seq}")
-        print(f"Season encoded: {user_season}")
+        # Prepare temperature sequence for LSTM
+        temp_seq = np.array(data['temperature']).reshape(1, 5, 1)
 
         # Make prediction
         predicted_yields = model.predict(
-            [user_ph_scaled, user_rainfall_scaled, user_temperature_seq, user_season],
+            [temp_seq, other_features_final],
             verbose=0
         )[0]
 
         # Get top 3 crops
-        top_3_crop_indices = np.argsort(predicted_yields)[-3:][::-1]
-        top_3_crops = crop_encoder.categories_[0][top_3_crop_indices]
+        top_3_indices = np.argsort(predicted_yields)[-3:][::-1]
+        top_3_crops = crop_encoder[top_3_indices]
 
         # Prepare response
         response = {
@@ -87,7 +74,7 @@ def predict():
                     "crop": crop,
                     "yield": float(predicted_yields[idx])
                 }
-                for idx, crop in zip(top_3_crop_indices, top_3_crops)
+                for idx, crop in zip(top_3_indices, top_3_crops)
             ]
         }
 
@@ -98,57 +85,77 @@ def predict():
         print(f"Error during prediction: {e}")
         return jsonify({'error': str(e)}), 400
 
-# Add these new model loads after your existing ones
-# After your existing imports, add:
+# Update model loading section
 try:
-    fertilizer_model = joblib.load('C:\\Users\\arunk\\Desktop\\cyp\\ML\\fertilizer\\fertilizer_model.pkl')
-    fertilizer_scaler = joblib.load('C:\\Users\\arunk\\Desktop\\cyp\\ML\\fertilizer\\fertilizer_scaler.pkl')
-    fertilizer_crop_encoder = joblib.load('C:\\Users\\arunk\\Desktop\\cyp\\ML\\fertilizer\\fertilizer_crop_encoder.pkl')
-    fertilizer_season_encoder = joblib.load('C:\\Users\\arunk\\Desktop\\cyp\\ML\\fertilizer\\fertilizer_season_encoder.pkl')
-    fertilizer_output_encoder = joblib.load('C:\\Users\\arunk\\Desktop\\cyp\\ML\\fertilizer\\fertilizer_output_encoder.pkl')
-    print("Fertilizer model and encoders loaded successfully.")
+    fertilizer_model = joblib.load('f:\\Study\\S8\\cyp\\ML\\fertilizer-model\\fertilizer_model.joblib')
+    fertilizer_scaler = joblib.load('f:\\Study\\S8\\cyp\\ML\\fertilizer-model\\fertilizer_scaler.joblib')
+    fertilizer_crop_encoder = joblib.load('f:\\Study\\S8\\cyp\\ML\\fertilizer-model\\crop_encoder.joblib')
+    fertilizer_soil_encoder = joblib.load('f:\\Study\\S8\\cyp\\ML\\fertilizer-model\\soil_encoder.joblib')
+    fertilizer_encoder = joblib.load('f:\\Study\\S8\\cyp\\ML\\fertilizer-model\\fertilizer_encoder.joblib')
+    fertilizer_recommendations = joblib.load('f:\\Study\\S8\\cyp\\ML\\fertilizer-model\\fertilizer_recommendations.joblib')
+    print("Fertilizer model and preprocessors loaded successfully.")
 except Exception as e:
     print(f"Error loading fertilizer model: {e}")
+    exit(1)  # Stop execution if models aren't loaded properly
 
 @app.route('/fertilizer', methods=['POST'])
 def predict_fertilizer():
     try:
         data = request.get_json()
-        print("Received data:", data)  # Debug print
+        print("Received data:", data)
 
-        # Prepare input data
-        numeric_data = np.array([[
-            float(data['ph']),
-            float(data['rainfall']),
-            float(data['temperature'])
-        ]])
+        # Create input data dictionary with case-insensitive key handling
+        input_data = {
+            'Temperature': float(data.get('Temperature', data.get('temperature', 0))),
+            'Moisture': float(data.get('Moisture', data.get('moisture', 0))),
+            'Rainfall': float(data.get('Rainfall', data.get('rainfall', 0))),
+            'PH': float(data.get('PH', data.get('ph', 0))),
+            'Soil': data.get('Soil', data.get('soil', '')),
+            'Crop': data.get('Crop', data.get('crop', ''))
+        }
+
+        # Create DataFrame
+        sample_df = pd.DataFrame([input_data])
         
-        # Scale numeric features
-        numeric_scaled = fertilizer_scaler.transform(numeric_data)
+        # Encode categorical variables
+        try:
+            sample_df['Crop'] = fertilizer_crop_encoder.transform(sample_df[['Crop']].values.ravel())
+            sample_df['Soil'] = fertilizer_soil_encoder.transform(sample_df[['Soil']].values.ravel())
+        except ValueError as e:
+            return jsonify({'error': f'Invalid crop or soil type: {str(e)}'}), 400
         
-        # Encode categorical features
-        crop_encoded = fertilizer_crop_encoder.transform([data['crop']])
-        season_encoded = fertilizer_season_encoder.transform([data['season']])
+        # Scale numerical features
+        numerical_features = ['Temperature', 'Moisture', 'Rainfall', 'PH']  # Added moisture
+        numerical_sample = fertilizer_scaler.transform(sample_df[numerical_features])
+        categorical_sample = sample_df[['Crop', 'Soil']].values  # Changed from season to soil
         
         # Combine features
-        X = np.column_stack([numeric_scaled, crop_encoded, season_encoded])
+        sample_final = np.hstack((numerical_sample, categorical_sample))
         
-        # Make prediction
-        fertilizer_pred = fertilizer_model.predict(X)
-        fertilizer_name = fertilizer_output_encoder.inverse_transform(fertilizer_pred)[0]
+        # Make prediction and get recommendations
+        prediction = fertilizer_model.predict(sample_final)
+        fertilizer_name = fertilizer_encoder.inverse_transform(prediction)[0]
+        
+        # Get fertilizer-specific recommendations
+        # Update the fertilizer details reference to use input_data instead of data
+        fertilizer_details = fertilizer_recommendations.get(fertilizer_name, {
+            'application_rate': 'Standard application rate of 200-250 kg/ha',
+            'timing': 'Apply as per local agricultural guidelines',
+            'notes': f'Consult local agricultural expert for specific recommendations for {input_data["Crop"]}'
+        })
         
         response = {
             'fertilizer': fertilizer_name,
-            'application_rate': '200-250 kg/ha',
-            'timing': 'Apply in split doses: 50% at sowing, 25% at vegetative stage, 25% at reproductive stage',
-            'notes': f'Ensure proper soil moisture before application. For {data["crop"]}, monitor soil pH regularly.'
+            'application_rate': fertilizer_details['application_rate'],
+            'timing': fertilizer_details['timing'],
+            'notes': fertilizer_details['notes']
         }
         
-        print("Response:", response)  # Debug print
+        print("Response:", response)
         return jsonify(response)
 
     except Exception as e:
-        print(f"Error during fertilizer prediction: {e}")  # Debug print
+        print(f"Error during fertilizer prediction: {e}")
         return jsonify({'error': str(e)}), 400
 
 if __name__ == '__main__':
