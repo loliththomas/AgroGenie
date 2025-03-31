@@ -9,6 +9,7 @@ import CropPrediction from '../features/CropPrediction.jsx';
 import FertilizerRecommendation from '../features/FertilizerRecommendation.jsx';
 import Yield from '../features/Yield.jsx';  
 import FertilizerResults from '../features/FertilizerResults.jsx';
+import LandingPage from '../features/LandingPage.jsx';
 
 function App() {
   return (
@@ -26,7 +27,7 @@ function App() {
                 </ProtectedRoute>
               }
             />
-            <Route path="/" element={<Login />} />
+            <Route path="/" element={<LandingPage />} />
             <Route path="/prediction" element={<CropPrediction />} />
             <Route path="/fertilizer" element={<FertilizerRecommendation />} />
             <Route path="/yield" element={<Yield />} /> 
