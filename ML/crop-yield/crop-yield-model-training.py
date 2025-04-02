@@ -9,6 +9,8 @@ from tensorflow.keras.callbacks import EarlyStopping
 import tensorflow as tf
 from tensorflow.keras.saving import register_keras_serializable
 import joblib
+from sklearn.metrics import mean_squared_error, mean_absolute_error
+import matplotlib.pyplot as plt
 
 # Register custom loss for model saving
 @register_keras_serializable()
@@ -148,3 +150,40 @@ sample_prediction = predict_top_crops(
 print("\nSample Prediction:")
 for crop, yield_pred in sample_prediction:
     print(f"{crop}: {yield_pred:.2f}")
+
+# After test_loss calculation
+y_pred = model.predict([X_temp_test.reshape(-1, 5, 1), X_other_test])
+
+# Calculate overall metrics
+print("\nOverall Model Metrics:")
+mse = mean_squared_error(y_test, y_pred)
+rmse = np.sqrt(mse)
+mae = mean_absolute_error(y_test, y_pred)
+
+print(f"MSE: {mse:.4f}")
+print(f"RMSE: {rmse:.4f}")
+print(f"MAE: {mae:.4f}")
+
+# Plot training history and metrics
+plt.figure(figsize=(12, 4))
+
+# Plot 1: Training History
+plt.subplot(1, 2, 1)
+plt.plot(history.history['loss'], label='Training Loss')
+plt.plot(history.history['val_loss'], label='Validation Loss')
+plt.title('Model Loss Over Time')
+plt.xlabel('Epoch')
+plt.ylabel('Loss')
+plt.legend()
+
+# Plot 2: Actual vs Predicted
+plt.subplot(1, 2, 2)
+plt.scatter(y_test.flatten(), y_pred.flatten(), alpha=0.5)
+plt.plot([y_test.min(), y_test.max()], [y_test.min(), y_test.max()], 'r--', lw=2)
+plt.title('Actual vs Predicted Yields')
+plt.xlabel('Actual Yield')
+plt.ylabel('Predicted Yield')
+
+plt.tight_layout()
+plt.savefig('f:\\Study\\S8\\Final Year Project\\cyp\\ML\\crop-yield\\model_performance.png')
+plt.close()

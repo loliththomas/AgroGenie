@@ -1,0 +1,168 @@
+/* Navbar */
+.navbar {
+    background-color: white;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 4px;
+    padding-bottom: 10px;
+    border-bottom: solid #F2F5F0;
+}
+
+.navbar .logo {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    color: #141811;
+}
+
+.navbar .logo .icon {
+    font-size: 1.5rem;
+    color: #16a34a;
+}
+
+.navbar .logo h2 {
+    font-size: 1.125rem;
+    font-weight: bold;
+}
+
+.navbar .links {
+    display: flex;
+    gap: 1.5rem;
+    align-items: center;
+}
+
+.navbar .links a,
+.navbar .links button {
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.navbar .links a {
+    color: #4b5563;
+    transition: color 0.3s;
+}
+
+.navbar .links a:hover {
+    color: #1f2937;
+}
+
+.navbar .links .signup-btn {
+    background-color: #15803d;
+    padding: 0.5rem 1rem;
+    border-radius: 9999px;
+    font-weight: bold;
+    color: white;
+    transition: background-color 0.3s;
+}
+
+.navbar .links .signup-btn:hover {
+    background-color: #7ad628;
+}
+
+.navbar .links .login-btn {
+    background-color: #15803d;
+    padding: 0.5rem 1rem;
+    border-radius: 9999px;
+    font-weight: bold;
+    color: #4b5563;
+    color: white;
+    transition: background-color 0.3s;
+}
+
+.navbar .links .login-btn:hover {
+    background-color: #7ad628;
+}
+
+/* Hero Section */
+.hero-section {
+    width: 70vw;
+    margin: auto;
+    margin-top: 30px;
+    display: flex;
+    background-color: white;
+    overflow: hidden;
+    padding-top: 6rem;
+    padding-bottom: 6rem;
+    border-radius: 12px;
+    background-image: url('src/images/farm-3d.jpg');
+    background-size: cover;
+}
+
+.hero-section .content {
+    max-width: 7xl;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+}
+
+.hero-section .heading {
+    font-size: 4rem;
+    font-weight: bold;
+    color: #1f2937;
+    text-align: center;
+}
+
+.hero-section .subheading {
+    margin-top: 1.5rem;
+    font-size: 1rem;
+    color: #6b7280;
+    text-align: center;
+}
+
+.hero-section .cta-btn {
+    width: 130px;
+    height: 60px;
+    margin: 1.25rem;
+    background-color: #16a34a;
+    border-radius: 9999px;
+    color: white;
+    font-weight: bold;
+    text-align: center;
+    transition: background-color 0.3s;
+    align-self: center;
+
+    
+}
+
+.hero-section .cta-btn:hover {
+    background-color: #15803d;
+}
+
+
+/* Features Section */
+.features-section {
+    background-color: #f9fafb;
+    padding: 3rem 1rem;
+}
+
+.features-section .title {
+    text-align: center;
+    font-size: 2rem;
+    font-weight: bold;
+    color: #1f2937;
+}
+
+.features-section .subtitle {
+    margin-top: 1rem;
+    text-align: center;
+    font-size: 1rem;
+    color: #6b7280;
+}
+
+.features-section .feature-cards {
+    margin-top: 2.5rem;
+    display: flex;
+    gap: 2rem;
+    justify-content: space-between;
+    margin-left: 10%;
+    margin-right: 10%;
+}
+
+.features-section .feature-cards img {
+    height: 12rem;
+    object-fit: cover;
+    border-radius: 1rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}

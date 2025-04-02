@@ -8,7 +8,7 @@ import { AuthProvider } from './contexts/AuthContext';
 import CropPrediction from '../features/CropPrediction.jsx';
 import FertilizerRecommendation from '../features/FertilizerRecommendation.jsx';
 import Yield from '../features/Yield.jsx';  
-import FertilizerResults from '../features/FertilizerResults.jsx';
+import FertilizerResults from '../features/fertilizerresults.jsx';
 import LandingPage from '../features/LandingPage.jsx';
 
 function App() {
