@@ -9,6 +9,7 @@ export default function SignUp() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
   const { signup } = useAuth();
   const navigate = useNavigate();
 
@@ -23,7 +24,11 @@ export default function SignUp() {
       setError('');
       setLoading(true);
       await signup(email, password);
-      navigate('/dashboard');
+      setShowSuccess(true);
+      setTimeout(() => {
+        setShowSuccess(false);
+        navigate('/login');
+      }, 2000);
     } catch (error) {
       setError('Failed to create an account');
     }
@@ -32,6 +37,12 @@ export default function SignUp() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-50 to-green-100">
+      {showSuccess && (
+        <div className="fixed top-4 right-4 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg shadow-lg">
+          Account created successfully! Redirecting to login...
+        </div>
+      )}
+      
       <div className="bg-white p-8 rounded-xl shadow-lg w-96">
         <div className="text-center mb-8">
           <h2 className="text-3xl font-bold text-green-800">Join AgroGenie</h2>

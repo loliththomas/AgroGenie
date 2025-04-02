@@ -1,16 +1,28 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 export default function FertilizerRecommendation() {
-  const navigate = useNavigate();
-  const [formData, setFormData] = useState({
-    ph: '',
-    rainfall: '',
-    temperature: '',
-    moisture: '',  // Added moisture
-    soil: '',      // Changed from season to soil
-    crop: ''
-  });
+    const navigate = useNavigate();
+    const location = useLocation();
+    
+    const [formData, setFormData] = useState({
+        ph: '',
+        rainfall: '',
+        temperature: '',
+        moisture: '',
+        soil: '',
+        crop: ''
+    });
+
+    // Add useEffect to handle preselected crop
+    useEffect(() => {
+        if (location.state?.preselectedCrop) {
+            setFormData(prev => ({
+                ...prev,
+                crop: location.state.preselectedCrop
+            }));
+        }
+    }, [location.state]);
 
   const crops = [
     'rice', 'wheat', 'Mung Bean', 'Tea', 'millet', 'maize', 'Lentil', 'Jute', 'Coffee', 'Cotton', 'Ground Nut', 'Peas', 'Rubber', 'Sugarcane', 'Tobacco', 'Kidney Beans', 'Moth Beans', 'Coconut', 'Black gram', 'Adzuki Beans', 'Pigeon Peas', 'Chickpea', 'banana', 'grapes', 'apple', 'mango', 'muskmelon', 'orange', 'papaya', 'pomegranate', 'watermelon'

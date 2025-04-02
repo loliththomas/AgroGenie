@@ -71,6 +71,13 @@ export default function Yield() {
                 },
             },
         },
+        onClick: (event, elements) => {
+            if (elements.length > 0) {
+                const index = elements[0].index;
+                const selectedCrop = results[index].crop;
+                navigate('/fertilizer', { state: { preselectedCrop: selectedCrop } });
+            }
+        }
     };
 
     // Keep your existing empty state handling
