@@ -119,7 +119,8 @@ export default function CropPrediction() {
                                     name="rainfall"
                                     value={formData.rainfall}
                                     onChange={handleChange}
-                                    min="0"
+                                    min="10"
+                                    max="11000"
                                     className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-transparent transition duration-200"
                                     required
                                 />
@@ -160,6 +161,8 @@ export default function CropPrediction() {
                                             className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-transparent transition duration-200"
                                             placeholder={`Reading ${index + 1}`}
                                             step="0.1"
+                                            min="-10"
+                                            max="50"
                                             required
                                         />
                                         <span className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500">°C</span>

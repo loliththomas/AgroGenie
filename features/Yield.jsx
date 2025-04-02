@@ -110,7 +110,7 @@ export default function Yield() {
 
     return (
         <div className="min-h-screen bg-gray-50">
-            <div className="bg-green-800 text-white py-4 px-8 shadow-lg">
+            <div className="bg-green-800 text-green py-4 px-8 shadow-lg">
                 <div className="max-w-4xl mx-auto">
                     <h1 className="text-3xl font-bold">Top 3 Recommended Crops</h1>
                 </div>
